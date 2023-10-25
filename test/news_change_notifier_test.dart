@@ -4,7 +4,8 @@ import 'package:flutter_testing_tutorial/news_change_notifier.dart';
 import 'package:flutter_testing_tutorial/news_service.dart';
 import 'package:mocktail/mocktail.dart';
 
-// 4. Create MockNewsService class for step 3 below.
+// 4. Create MockNewsService class for step 3 below. - We're not using this, this is just
+// the most basic and not a good way and written for revising the basic concepts.
 class MockNewsService implements NewsService {
   bool areArticledCalled = false;
 
@@ -54,6 +55,59 @@ void main() {
       expect(sut.articles, []);
       // Initially our isLoadin is false - check that
       expect(sut.isLoading, false);
+    },
+  );
+
+  // 10. TEST FOR THE NEWS getArticles Method
+  // Whenever we'll test methods, use group((){}) for test - #recommended
+  //
+  group(
+    'getArticles',
+    () {
+      // articls from service
+      final articlesFromService = [
+        Article(title: 'Test 1', content: 'Test 1 content'),
+        Article(title: 'Test 2', content: 'Test 2 content'),
+        Article(title: 'Test 3', content: 'Test 3 content'),
+        Article(title: 'Test 4', content: 'Test 4 content'),
+        Article(title: 'Test 5', content: 'Test 5 content'),
+      ];
+      void arrangeNewsServiceReturns3Articles() {
+        when(() => mockNewsService.getArticles())
+            .thenAnswer((_) async => articlesFromService);
+      }
+
+      // 11. Write all the tests
+
+      // TEST - 1
+      test(
+        'get articles using the NewsService',
+        () async {
+          arrangeNewsServiceReturns3Articles();
+          when(() => mockNewsService.getArticles()).thenAnswer((_) async => []);
+
+          await sut.getArticles();
+          verify(() => mockNewsService.getArticles()).called(
+              1); // verifying that the getArticles method called only 1 time from the mockNewsService
+        },
+      );
+
+      // TEST - 2, data loaded or not
+      test('''indicate loading of data, 
+          set articles to the ones from the service,
+          indicate data is not loading anymore.''', () async {
+        arrangeNewsServiceReturns3Articles();
+
+        // Test calling getArticles indicates loading of data
+        final future = sut.getArticles();
+        expect(sut.isLoading, true);
+        await future;
+
+        // check articles are the ones from the service
+        expect(sut.articles, articlesFromService);
+
+        expect(sut.isLoading, false);
+      });
     },
   );
 }
