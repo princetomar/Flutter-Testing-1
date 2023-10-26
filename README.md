@@ -1,4 +1,4 @@
-#Flutter News App Testing Tutorial
+# Flutter News App Testing Tutorial
 
 This Flutter project is focused on revising and demonstrating the concepts of testing, including Unit Testing, Widget Testing, and Integration Testing, using a simple news app as an example. In this project, we are using the Flutter framework to build a news app and applying various testing techniques to ensure its functionality.
 
